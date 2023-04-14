@@ -21,6 +21,8 @@ if (localStorage.getItem("profile")) {
   populateUI(profile);
 }
 
+document.getElementById("logout")!.addEventListener("click", clearLocalStorage);
+
 export async function redirectToAuthCodeFlow(clientId: string) {
   const verifier = generateCodeVerifier(128);
   const challenge = await generateCodeChallenge(verifier);
@@ -107,4 +109,9 @@ function populateUI(profile: any) {
   document.getElementById("url")!.setAttribute("href", profile.href);
   document.getElementById("imgUrl")!.innerText =
     profile.images[0]?.url ?? "(no profile image)";
+}
+
+function clearLocalStorage() {
+  localStorage.clear();
+  document.location = "http://localhost:5173";
 }
