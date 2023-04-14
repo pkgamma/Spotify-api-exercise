@@ -4,21 +4,23 @@ const code = params.get("code");
 
 console.log("Hello world!");
 
+document.getElementById("login")!.addEventListener("click", () => {
+  redirectToAuthCodeFlow(clientId);
+});
+
 if (localStorage.getItem("profile")) {
   // if profile has been fetched before, just populate the UI
   populateUI(JSON.parse(localStorage.getItem("profile")!));
-} else if (!code) {
-  // if no profile has been fetched and no code in url, redirect to auth code flow
-  localStorage.clear();
-  redirectToAuthCodeFlow(clientId);
 } else {
-  // if there's code in url (callback from auth code flow), fetch access token and profile
-  const accessToken = await getAccessToken(clientId, code);
-  console.log("accessToken: ", accessToken);
-  const profile = await fetchProfile(accessToken);
-  console.log("profile: ", profile);
-  localStorage.setItem("profile", JSON.stringify(profile));
-  populateUI(profile);
+  if (code) {
+    // if there's code in url (callback from auth code flow), fetch access token and profile
+    const accessToken = await getAccessToken(clientId, code);
+    console.log("accessToken: ", accessToken);
+    const profile = await fetchProfile(accessToken);
+    console.log("profile: ", profile);
+    localStorage.setItem("profile", JSON.stringify(profile));
+    populateUI(profile);
+  }
 }
 
 document.getElementById("logout")!.addEventListener("click", clearLocalStorage);
