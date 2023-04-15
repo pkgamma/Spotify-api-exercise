@@ -22,7 +22,7 @@ document.getElementById("login")!.addEventListener("click", () => {
 });
 document.getElementById("logout")!.addEventListener("click", clearLocalStorage);
 
-const searchForm = document.getElementById("search-form");
+const searchForm = document.getElementById("search-form-spotify-artist");
 searchForm.addEventListener("submit", (event) => {
   event.preventDefault(); // prevent the default form submission behavior
 
@@ -47,7 +47,6 @@ async function searchForArtist(artistName: string) {
 function populateArtist (artist: any) {
   document.getElementById("artist")!.innerText = artist.name;
 }
-
 
 export async function redirectToAuthCodeFlow(clientId: string) {
   const verifier = generateCodeVerifier(128);
@@ -133,8 +132,6 @@ function populateUI(profile: any) {
     .setAttribute("href", profile.external_urls.spotify);
   document.getElementById("url")!.innerText = profile.href;
   document.getElementById("url")!.setAttribute("href", profile.href);
-  document.getElementById("imgUrl")!.innerText =
-    profile.images[0]?.url ?? "(no profile image)";
 }
 
 function clearLocalStorage() {
