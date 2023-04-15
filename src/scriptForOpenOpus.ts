@@ -1,3 +1,5 @@
+import { searchForSpotifyArtist } from "./scriptForSpotify";
+
 async function fetchOpenOpusApi(endpoint: string) {
   const result = await fetch(`https://api.openopus.org/${endpoint}`, {});
   return await result.json();
@@ -17,16 +19,17 @@ searchForm.addEventListener("submit", (event) => {
 
 async function searchForArtist(artistName: string) {
   const result = await fetchOpenOpusApi(`/composer/list/search/${artistName}.json`);
-  console.log("OpenOpusresult: ", result);
   if (!result.composers) {
     console.log(result.status.error);
     return;
   }
+  console.log("OpenOpusresult: ", result.composers[0]);
   populateArtist(result);
+  searchForSpotifyArtist(artistName);
 }
 
 function populateArtist (result: any) {
-  document.getElementById("artist")!.innerText = result.composers[0].complete_name;
+  document.getElementById("artist")!.innerText = "From OpenOpus: " + result.composers[0].complete_name;
   const openopusPic = new Image(200, 200);
   openopusPic.src = result.composers[0].portrait;
   document.getElementById("openopus-pic")!.appendChild(openopusPic);

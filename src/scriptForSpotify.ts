@@ -27,10 +27,10 @@ searchForm.addEventListener("submit", (event) => {
   event.preventDefault(); // prevent the default form submission behavior
 
   const searchTerm = document.getElementById("search-input").value;
-  searchForArtist(searchTerm);
+  searchForSpotifyArtist(searchTerm);
 });
 
-async function searchForArtist(artistName: string) {
+export async function searchForSpotifyArtist(artistName: string) {
   const accessToken = localStorage.getItem("accessToken");
   const result = await fetch(
     `https://api.spotify.com/v1/search?q=${artistName}&type=artist`,
@@ -45,7 +45,7 @@ async function searchForArtist(artistName: string) {
 }
 
 function populateArtist (artist: any) {
-  document.getElementById("artist")!.innerText = artist.name;
+  document.getElementById("artist")!.innerText = "From Spotify: " + artist.name;
 }
 
 export async function redirectToAuthCodeFlow(clientId: string) {
