@@ -2,12 +2,6 @@ const clientId = "dcea37d6562f44058d7e60105f600a53"; // Replace with your client
 const params = new URLSearchParams(window.location.search);
 const code = params.get("code");
 
-console.log("Hello world!");
-
-document.getElementById("login")!.addEventListener("click", () => {
-  redirectToAuthCodeFlow(clientId);
-});
-
 if (localStorage.getItem("profile")) {
   // if profile has been fetched before, just populate the UI
   populateUI(JSON.parse(localStorage.getItem("profile")!));
@@ -15,7 +9,7 @@ if (localStorage.getItem("profile")) {
   if (code) {
     // if there's code in url (callback from auth code flow), fetch access token and profile
     const accessToken = await getAccessToken(clientId, code);
-    console.log("accessToken: ", accessToken);
+    localStorage.setItem("accessToken", accessToken);
     const profile = await fetchProfile(accessToken);
     console.log("profile: ", profile);
     localStorage.setItem("profile", JSON.stringify(profile));
@@ -23,7 +17,37 @@ if (localStorage.getItem("profile")) {
   }
 }
 
+document.getElementById("login")!.addEventListener("click", () => {
+  redirectToAuthCodeFlow(clientId);
+});
 document.getElementById("logout")!.addEventListener("click", clearLocalStorage);
+
+const searchForm = document.getElementById("search-form");
+searchForm.addEventListener("submit", (event) => {
+  event.preventDefault(); // prevent the default form submission behavior
+
+  const searchTerm = document.getElementById("search-input").value;
+  searchForArtist(searchTerm);
+});
+
+async function searchForArtist(artistName: string) {
+  const accessToken = localStorage.getItem("accessToken");
+  const result = await fetch(
+    `https://api.spotify.com/v1/search?q=${artistName}&type=artist`,
+    {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    }
+  );
+
+  const { artists } = await result.json();
+  console.log("artists: ", artists);
+  populateArtist(artists.items[0]);
+}
+
+function populateArtist (artist: any) {
+  document.getElementById("artist")!.innerText = artist.name;
+}
+
 
 export async function redirectToAuthCodeFlow(clientId: string) {
   const verifier = generateCodeVerifier(128);
